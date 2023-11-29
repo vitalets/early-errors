@@ -13,6 +13,7 @@
     "prettier:w": "prettier --write .",
     "test": "npx playwright test --project chromium",
     "test:a": "npx playwright test",
+    "test:m": "MINIFIED=1 npx playwright test",
     "build": "node build.mjs"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-(function (win, cfg) {
+((win, cfg) => {
   // avoid second execution
   if (win.__earlyerrors__) return;
   win.__earlyerrors__ = true;
@@ -9,7 +9,7 @@
   var flushRejections = listen('unhandledrejection');
 
   var addEventListenerOrig = win.addEventListener;
-  win.addEventListener = function (type, handler, options) {
+  win.addEventListener = (type, handler, options) => {
     if (type === 'error') flushErrors(handler);
     if (type === 'unhandledrejection') flushRejections(handler);
     return addEventListenerOrig.call(win, type, handler, options);
@@ -21,7 +21,7 @@
     var propHandler;
 
     // listen for events
-    win.addEventListener(eventName, function (event) {
+    win.addEventListener(eventName, (event) => {
       if (!flushed && queue.length < cfg.max) queue.push(event);
     });
 
@@ -31,10 +31,8 @@
       if (propHandler) return propHandler.apply(win, arguments);
     };
     Object.defineProperty(win, propName, {
-      get: function () {
-        return propHandler;
-      },
-      set: function (fn) {
+      get: () => propHandler,
+      set: (fn) => {
         propHandler = fn;
         flush(fn);
       },

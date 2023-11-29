@@ -1,88 +1,63 @@
 (function (win, cfg) {
-  // handle second execution
+  // avoid second execution
   if (win.__earlyerrors__) return;
   win.__earlyerrors__ = true;
 
   cfg = Object.assign({ max: 50 }, cfg);
 
-  var errors = [];
-  var errorsFlushed = false;
-  var onerror;
+  var flushErrors = listen('error');
+  var flushRejections = listen('unhandledrejection');
 
-  var rejections = [];
-  var rejectionFlushed = false;
-  var onunhandledrejection;
+  var addEventListenerOrig = win.addEventListener;
+  win.addEventListener = function (type, handler, options) {
+    if (type === 'error') flushErrors(handler);
+    if (type === 'unhandledrejection') flushRejections(handler);
+    return addEventListenerOrig.call(win, type, handler, options);
+  };
 
-  listenErrors();
-  instrumentAddEventListener();
-  instrumentOnError();
-  instrumentOnUnhandledRejection();
+  function listen(eventName) {
+    var queue = [];
+    var flushed = false;
+    var propHandler;
 
-  function listenErrors() {
-    win.addEventListener('error', function (event) {
-      if (!errorsFlushed && errors.length < cfg.max) errors.push(event);
+    // listen for events
+    win.addEventListener(eventName, function (event) {
+      if (!flushed && queue.length < cfg.max) queue.push(event);
     });
-    win.addEventListener('unhandledrejection', function (event) {
-      if (!rejectionFlushed && rejections.length < cfg.max) rejections.push(event);
-    });
-  }
 
-  function instrumentAddEventListener() {
-    var addEventListenerOrig = win.addEventListener;
-    win.addEventListener = function (type, handler, options) {
-      if (type === 'error') flushErrors(handler);
-      if (type === 'unhandledrejection') flushRejections(handler);
-      return addEventListenerOrig.call(win, type, handler, options);
+    // overwrite window.onerror / window.onunhandledrejection to hook on setter
+    var propName = 'on' + eventName;
+    win[propName] = function () {
+      if (propHandler) return propHandler.apply(win, arguments);
     };
-  }
-
-  function instrumentOnError() {
-    win.onerror = function () {
-      if (onerror) return onerror.apply(win, arguments);
-    };
-    Object.defineProperty(win, 'onerror', {
+    Object.defineProperty(win, propName, {
       get: function () {
-        return onerror;
+        return propHandler;
       },
       set: function (fn) {
-        onerror = fn;
-        flushErrors();
+        propHandler = fn;
+        flush(fn);
       },
     });
-  }
 
-  function instrumentOnUnhandledRejection() {
-    win.onunhandledrejection = function () {
-      if (onunhandledrejection) onunhandledrejection.apply(win, arguments);
-    };
-    Object.defineProperty(win, 'onunhandledrejection', {
-      get: function () {
-        return onunhandledrejection;
-      },
-      set: function (fn) {
-        onunhandledrejection = fn;
-        flushRejections();
-      },
-    });
-  }
-
-  function flushErrors(handler) {
-    errorsFlushed = true;
-    while (errors.length) {
-      var e = errors.shift();
-      // try catch
-      if (onerror) onerror(e.message, e.filename, e.lineno, e.colno, e.error);
-      if (handler) handler(e);
+    // flush all queued errors
+    function flush(handler) {
+      flushed = true;
+      while (queue.length) {
+        try {
+          var e = queue.shift();
+          // for window.onerror pass 5 arguments
+          if (eventName === 'error' && handler === propHandler) {
+            handler(e.message, e.filename, e.lineno, e.colno, e.error);
+          } else {
+            handler(e);
+          }
+        } catch (oops) {
+          console.error(oops);
+        }
+      }
     }
-  }
 
-  function flushRejections(handler) {
-    rejectionFlushed = true;
-    while (rejections.length) {
-      var e = rejections.shift();
-      // try catch
-      if (onunhandledrejection) onunhandledrejection(e);
-      if (handler) handler(e);
-    }
+    return flush;
   }
 })(window);

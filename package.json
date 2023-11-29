@@ -11,11 +11,13 @@
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "npx playwright test --project chromium",
-    "test:a": "npx playwright test"
+    "test:a": "npx playwright test",
+    "build": "node build.mjs"
   },
   "author": "",
   "devDependencies": {
     "@playwright/test": "^1.40.0",
+    "esbuild": "0.19.8",
     "http-server": "^14.1.1",
     "prettier": "^3.1.0"
   },

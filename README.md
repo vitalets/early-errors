@@ -1,6 +1,6 @@
 # early-errors
 
-A tiny script for capturing **unhandled errors** and **rejections** from the starting point of webapp. 
+A tiny script for capturing **unhandled errors** and **rejections** from the starting point of web app. 
 
 ## Description
 

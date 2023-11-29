@@ -1,3 +1,5 @@
+window.messages = [];
+
 window.triggerError = (message) => {
   return new Promise((resolve) => {
     setTimeout(() => {

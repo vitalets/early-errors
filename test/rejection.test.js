@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { injectEarlyErrors, triggerRejection } from './helpers';
+import { test } from '@playwright/test';
+import { injectEarlyErrors, triggerRejection, expectMessages } from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
@@ -10,22 +10,20 @@ test('onunhandledrejection', async ({ page }) => {
   await injectEarlyErrors(page);
   await triggerRejection(page, 'foo');
   await triggerRejection(page, 'bar');
-  const messages = await page.evaluate(() => {
-    const messages = [];
+  await page.evaluate(() => {
     window.onunhandledrejection = (event) => messages.push(event.reason.message);
-    return messages;
   });
-  expect(messages).toEqual(['foo', 'bar']);
+  await triggerRejection(page, 'baz');
+  await expectMessages(page, ['foo', 'bar', 'baz']);
 });
 
 test('addEventListener unhandledrejection', async ({ page }) => {
   await injectEarlyErrors(page);
   await triggerRejection(page, 'foo');
   await triggerRejection(page, 'bar');
-  const messages = await page.evaluate(() => {
-    const messages = [];
+  await page.evaluate(() => {
     window.addEventListener('unhandledrejection', (event) => messages.push(event.reason.message));
-    return messages;
   });
-  expect(messages).toEqual(['foo', 'bar']);
+  await triggerRejection(page, 'baz');
+  await expectMessages(page, ['foo', 'bar', 'baz']);
 });

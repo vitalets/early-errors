@@ -1,7 +1,7 @@
 {
   "name": "early-errors",
   "version": "0.1.0",
-  "description": "A tiny script for capturing unhandled errors and rejections from the very beginning of a web app initialization",
+  "description": "A tiny script for capturing unhandled errors and rejections from the very starting point of webapp",
   "author": "Vitaliy Potapov",
   "main": "src/index.min.js",
   "files": [

@@ -6,7 +6,7 @@ A tiny script for capturing **unhandled errors** and **rejections** from the sta
 
 Most of the errors occur on a web page during initialization. Browser needs to load and evaluate all the JavaScript bundles, fetch data from API and build the UI. The problem is that you may attach [`window.onerror`](https://developer.mozilla.org/en-US/docs/Web/API/Window/error_event) handler too late and miss the errors.
 
-**Early-errors** solves that problem. When inlined into the html before any other scripts, it collects all unhandled errors and rejections until you attach the error handler. When handler is attached, it receives all the queued errors and then works as usual. No special API needed, you just use existing browser API like `window.onerror` or `window.addEventListener('error', ...)`.
+**Early-errors** solves that problem. When inlined into the html before any other scripts, it collects all unhandled errors and rejections until you attach the error handler. When handler is attached, it receives all the queued errors and then works as usual. No special API is needed, you just use existing browser API like `window.onerror` or `window.addEventListener('error', ...)`.
 
 ## Usage
 Inline the following code before any other scripts in your html file:
@@ -21,6 +21,6 @@ Then in your main bundle attach the error / rejection handlers:
 window.addEventListener('error', event => handleError(event.error));
 window.addEventListener('unhandledrejection', event => handleError(event.reason));
 // OR
-window.onerror = event => handleError(event);
+window.onerror = (msg, file, line, col, error) => handleError(error);
 window.onunhandledrejection = event => handleError(event.reason);
 ``` 

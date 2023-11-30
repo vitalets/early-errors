@@ -1,4 +1,4 @@
 package-lock.json
 playwright-report
 **/*.md
-*.min.js
+/dist

@@ -4,9 +4,13 @@ A tiny script for capturing **unhandled errors** and **rejections** from the ver
 
 ## Description
 
-Most of the errors occur on a web page during initialization. Browser needs to load and evaluate all the JavaScript bundles, fetch data from API and build the UI. The problem is that you may attach [`window.onerror`](https://developer.mozilla.org/en-US/docs/Web/API/Window/error_event) handler too late and miss the errors.
+Most of the errors occur on a web page during initialization. Browser needs to load and evaluate JavaScript bundles, fetch data from API and build the UI. The problem is that you may start handling errors too late and miss some of them.
 
-**Early-errors** solves that problem. When inlined into the html before any other scripts, it collects all unhandled errors and rejections until you attach the error handler. When handler is attached, it receives all the queued errors and then works as usual. No special API is needed, you just use existing browser API like `window.onerror` or `window.addEventListener('error', ...)`.
+On the other hand, loading error-handling code synchronously will increase page load time and degrade [web vital metrics](https://web.dev/articles/vitals#core-web-vitals). 
+
+**Early-errors** solves that problem. When inlined into the html before any other scripts, it starts collecting  errors on the earliest stage. Once you attach error handler, it flushes all the queued errors and stops. No special API is involved, you just subscribe with `window.onerror` or `window.addEventListener('error', ...)`.
+
+Early-errors is compatible with any error-reporting SDK like [Sentry](https://sentry.io), [Datadog](https://www.datadoghq.com/), [Rollbar](https://docs.rollbar.com/docs/browser-js), [AppInsights](https://github.com/microsoft/ApplicationInsights-JS), etc.
 
 ## Usage
 Inline the following code before any other scripts in your html file:

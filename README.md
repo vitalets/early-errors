@@ -1,4 +1,6 @@
 # early-errors
+[![npm version](https://img.shields.io/npm/v/early-errors)](https://www.npmjs.com/package/early-errors)
+[![license](https://img.shields.io/npm/l/early-errors)](https://github.com/vitalets/early-errors/blob/main/LICENSE)
 
 A tiny script for capturing **unhandled errors** and **rejections** from the very beginning of web app load. 
 

@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "description": "A tiny script for capturing unhandled errors and rejections from the very beginning of web app load",
   "author": "Vitaliy Potapov",
-  "main": "src/index.min.js",
+  "main": "dist/index.min.js",
   "files": [
     "src",
+    "dist",
     "README.md"
   ],
   "scripts": {
@@ -13,8 +14,9 @@
     "prettier:w": "prettier --write .",
     "test": "npx playwright test --project chromium",
     "test:a": "npx playwright test",
-    "test:m": "MINIFIED=1 npx playwright test",
-    "build": "node build.mjs"
+    "test:dist": "DIST=1 npx playwright test",
+    "build": "node build.mjs",
+    "release": "npm run build && npm run test:dist && np --yolo --no-release-draft --no-tests"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
@@ -23,5 +25,14 @@
     "lint-staged": "^15.1.0",
     "prettier": "^3.1.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vitalets/early-errors.git"
+  },
+  "keywords": [
+    "errors",
+    "errors-handling"
+  ],
+  "funding": "https://github.com/sponsors/vitalets",
   "license": "MIT"
 }

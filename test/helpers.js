@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 export async function injectEarlyErrors(page, cfg) {
-  const path = process.env.MINIFIED ? './dist/index.min.js' : './src/index.js';
+  const path = process.env.DIST ? './dist/index.min.js' : './src/index.js';
   await page.addScriptTag({ path });
 }
 

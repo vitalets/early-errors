@@ -53,6 +53,9 @@ test('addEventListener error', async ({ page }) => {
   await page.evaluate(() => {
     window.addEventListener('error', (event) => messages.push(event.error.message));
   });
+  await page.evaluate(() => {
+    window.addEventListener('error', (event) => messages.push(`handler2: ${event.error.message}`));
+  });
   await triggerError(page, 'baz');
-  await expectMessages(page, ['foo', 'bar', 'baz']);
+  await expectMessages(page, ['foo', 'bar', 'baz', 'handler2: baz']);
 });

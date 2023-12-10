@@ -24,6 +24,11 @@ test('addEventListener unhandledrejection', async ({ page }) => {
   await page.evaluate(() => {
     window.addEventListener('unhandledrejection', (event) => messages.push(event.reason.message));
   });
+  await page.evaluate(() => {
+    window.addEventListener('unhandledrejection', (event) =>
+      messages.push(`handler2: ${event.reason.message}`),
+    );
+  });
   await triggerRejection(page, 'baz');
-  await expectMessages(page, ['foo', 'bar', 'baz']);
+  await expectMessages(page, ['foo', 'bar', 'baz', 'handler2: baz']);
 });

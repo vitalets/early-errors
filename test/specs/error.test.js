@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { injectEarlyErrors, triggerError, expectMessages } from './helpers';
+import { injectEarlyErrors, triggerError, expectMessages } from '../helpers';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');

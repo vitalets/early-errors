@@ -17,24 +17,31 @@ If you attach [error event listener](https://developer.mozilla.org/en-US/docs/We
 Inline a tiny script at the top of a webpage to start collecting errors as early as possible. Once main code is loaded and error handler is attached, flush queued errors to that handler and get out of the game.
 
 ## Usage
-Inline the following script before any other scripts in your html file:
-```html
-<script>
-/* early-errors v0.1.0 */
-(function(r,a){if(r.__earlyerrors__)return;r.__earlyerrors__=!0,a=Object.assign({max:50},a);var c=i("error"),d=i("unhandledrejection"),v=r.addEventListener;r.addEventListener=function(t,e,u){return t==="error"&&c(e),t==="unhandledrejection"&&d(e),v.call(r,t,e,u)};function i(t){var e=[],u=!1,s;r.addEventListener(t,function(n){!u&&e.length<a.max&&e.push(n)});var f="on"+t;r[f]=function(){if(s)return s.apply(r,arguments)},Object.defineProperty(r,f,{get:function(){return s},set:function(n){s=n,l(n)}});function l(n){for(u=!0;e.length;)try{var o=e.shift();t==="error"&&n===s?n(o.message,o.filename,o.lineno,o.colno,o.error):n(o)}catch(h){console.error(h)}}return l}})(window);
-</script>
-```
+1. Inline the following script before any other scripts in your html:
+    ```html
+    <script>
+    /* early-errors v0.1.0 */
+    (function(r,a){if(r.__earlyerrors__)return;r.__earlyerrors__=!0,a=Object.assign({max:50},a);var c=i("error"),d=i("unhandledrejection"),v=r.addEventListener;r.addEventListener=function(t,e,u){return t==="error"&&c(e),t==="unhandledrejection"&&d(e),v.call(r,t,e,u)};function i(t){var e=[],u=!1,s;r.addEventListener(t,function(n){!u&&e.length<a.max&&e.push(n)});var f="on"+t;r[f]=function(){if(s)return s.apply(r,arguments)},Object.defineProperty(r,f,{get:function(){return s},set:function(n){s=n,l(n)}});function l(n){for(u=!0;e.length;)try{var o=e.shift();t==="error"&&n===s?n(o.message,o.filename,o.lineno,o.colno,o.error):n(o)}catch(h){console.error(h)}}return l}})(window);
+    </script>
+    ```
 
-Attach errors handler in the main bundle using standard events:
+2. In your code attach errors / rejections handler using standard events:
 
-* [`error`](https://developer.mozilla.org/en-US/docs/Web/API/Window/error_event)
-* [`unhandledrejection`](https://developer.mozilla.org/en-US/docs/Web/API/Window/unhandledrejection_event)
+    * [`error`](https://developer.mozilla.org/en-US/docs/Web/API/Window/error_event)
+    * [`unhandledrejection`](https://developer.mozilla.org/en-US/docs/Web/API/Window/unhandledrejection_event)
 
-For example:
-```js
-window.addEventListener('error', event => console.log(event.error));
-window.addEventListener('unhandledrejection', event => console.log(event.reason));
-``` 
+    Example:
+    ```js
+    window.addEventListener('error', event => {
+      console.error(event.error);
+      // ...other code handling the error
+    });
+
+    window.addEventListener('unhandledrejection', event => {
+      console.error(event.reason);
+      // ...other code handling the error
+    });
+    ``` 
 
 Once you attach a handler, all queued events are flushed to it. Subsequent events come as usual.
 

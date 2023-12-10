@@ -11,7 +11,7 @@ Most of the errors occur on a webpage during the initial load. Browser needs to 
   - modify data due to business logic
   - build the UI
 
-If you attach [error event listener](https://developer.mozilla.org/en-US/docs/Web/API/Window/error_event) too late - you may miss these errors in your reporting service and never know that users have troubles with your app. Especially on mobile devices with slow Internet.
+If you attach [error event listener](https://developer.mozilla.org/en-US/docs/Web/API/Window/error_event) too late - you may miss these errors and never know that your users have troubles. Especially on mobile devices with slow Internet.
 
 ## A solution
 Inline a tiny script at the top of a webpage to start collecting errors as early as possible. Once main code is loaded and error handler is attached, flush queued errors to that handler and get out of the game.
